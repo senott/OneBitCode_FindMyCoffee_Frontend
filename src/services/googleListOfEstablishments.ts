@@ -1,13 +1,24 @@
-import api from '../services/api';
+import api from './api';
 
 interface IndexParams {
-  latitude: string;
-  longitude: string;
+  latitude: Number;
+  longitude: Number;
+}
+
+export interface CoffeeShop {
+  name: string;
+  geometry: {
+    location: {
+      lat: number;
+      lng: number;
+    };
+  };
 }
 
 const GoogleListOfEstablishmentsService = {
-  index: ({latitude, longitude}: IndexParams)  => {
-    api.get(`/google_store?latitude=${latitude}&longitude=${longitude}`)
+  index: async ({ latitude, longitude }: IndexParams): Promise<CoffeeShop[]>  => {
+    const response = await api.get(`/google_stores?latitude=${latitude}&longitude=${longitude}`);
+    return response.data.results;
   }
 }
 
