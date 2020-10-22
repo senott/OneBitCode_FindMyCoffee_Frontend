@@ -37,7 +37,7 @@ const Establishment: React.FC<EstablishmentComponent> = props => {
   }, [establishment]);
 
   /*
-    Vídeo 02: 1:04:47
+    Vídeo 02: 1:37:29 <==
     https://onebitcode.com/find-my-coffee-aula-2/
     https://developers.google.com/maps/documentation/javascript/using-typescript
     https://github.com/DefinitelyTyped/DefinitelyTyped/blob/49456848f1eaa69cbf67959a946391348d216794/types/googlemaps/reference/places-service.d.ts#L108

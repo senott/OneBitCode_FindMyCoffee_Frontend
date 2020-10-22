@@ -1,11 +1,16 @@
 import api from './api';
 
+import { RatingProps } from './rating';
+
 export interface StoreProps {
-  latitude: () => number,
-  longitude: () => number,
+  latitude: number,
+  longitude: number,
   name: string,
   address: string,
   google_place_id: string
+  ratings_count?: number,
+  ratings_average?: number,
+  ratings?: RatingProps[]
 }
 
 const StoreService = {

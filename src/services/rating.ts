@@ -1,10 +1,11 @@
 import api from './api';
 import { StoreProps } from './store';
 
-interface RatingProps {
+export interface RatingProps {
   value: number,
   opinion: string,
   user_name: string,
+  date?: string,
 };
 
 

@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import ReactStarRating from 'react-star-rating-component';
+import ReactStar from 'react-stars';
 
 import { EstablishmentProps } from '../../../../services/GoogleEstablishmentService';
 import RatingService from '../../../../services/rating';
@@ -7,9 +7,10 @@ import { NewRating, Input, TextArea, Button } from './styles';
 
 interface FormProps {
   place: EstablishmentProps;
+  loadStore: () => any;
 }
 
-const Form: React.FC<FormProps> = props => {
+const Form: React.FC<FormProps> = ({ place, loadStore }) => {
   const [username, setUsername] = useState('');
   const [opinion, setOpinion] = useState('');
   const [rating, setRating] = useState(1);
@@ -18,17 +19,13 @@ const Form: React.FC<FormProps> = props => {
     async e => {
       e.preventDefault();
 
-      if (
-        props.place.geometry &&
-        props.place.formatted_address &&
-        props.place.place_id
-      ) {
+      if (place.geometry && place.formatted_address && place.place_id) {
         const store_params = {
-          latitude: props.place.geometry.location.lat,
-          longitude: props.place.geometry.location.lng,
-          name: props.place.name,
-          address: props.place.formatted_address,
-          google_place_id: props.place.place_id,
+          latitude: Number(place.geometry.location.lat),
+          longitude: Number(place.geometry.location.lng),
+          name: place.name,
+          address: place.formatted_address,
+          google_place_id: place.place_id,
         };
 
         const rating_params = {
@@ -37,22 +34,29 @@ const Form: React.FC<FormProps> = props => {
           user_name: username,
         };
 
-        await RatingService.create(store_params, rating_params);
+        const response = await RatingService.create(
+          store_params,
+          rating_params,
+        );
 
-        //props.loadStore;
+        console.log(response);
+
+        loadStore();
 
         setUsername('');
         setOpinion('');
+        setRating(1);
       }
     },
     [
       opinion,
-      props.place.formatted_address,
-      props.place.geometry,
-      props.place.name,
-      props.place.place_id,
+      place.formatted_address,
+      place.geometry,
+      place.name,
+      place.place_id,
       rating,
       username,
+      loadStore,
     ],
   );
 
@@ -79,7 +83,13 @@ const Form: React.FC<FormProps> = props => {
         />
 
         <div>
-          <ReactStarRating name="rating" starCount={5} value={rating} />
+          <ReactStar
+            count={5}
+            color2="#ffd700"
+            size={24}
+            value={rating}
+            onChange={newRating => setRating(newRating)}
+          />
           <Button type="submit" className="button is-danger">
             Enviar
           </Button>
