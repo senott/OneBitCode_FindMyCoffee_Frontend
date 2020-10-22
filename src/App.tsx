@@ -1,16 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 
-import GoogleListOfEstablishmentsService, {
-  CoffeeShop,
-} from './services/GoogleListOfEstablishments';
+import GoogleListOfEstablishmentsService from './services/GoogleListOfEstablishments';
+import { EstablishmentProps } from './services/GoogleEstablishmentService';
+import Establishment from './components/Establishment';
 
 const App: React.FC = () => {
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
-  const [locations, setLocations] = useState<CoffeeShop[]>([]);
+  const [locations, setLocations] = useState<EstablishmentProps[]>([]);
+  const [selected, setSelected] = useState<EstablishmentProps | undefined>(
+    undefined,
+  );
 
-  async function setCurrentLocation() {
+  useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       position => {
         setLatitude(position.coords.latitude);
@@ -20,26 +23,27 @@ const App: React.FC = () => {
         alert('Sem a sua localização este app é inútil.');
       },
     );
-  }
-
-  async function loadCoffeeShops() {
-    const response = await GoogleListOfEstablishmentsService.index({
-      latitude,
-      longitude,
-    });
-
-    setLocations(response);
-  }
-
-  useEffect(() => {
-    setCurrentLocation();
   }, []);
 
   useEffect(() => {
     if (latitude !== 0 && longitude !== 0) {
-      loadCoffeeShops();
+      GoogleListOfEstablishmentsService.index({
+        latitude,
+        longitude,
+      }).then(response => setLocations(response));
     }
   }, [latitude, longitude]);
+
+  const handleMarkerClick = useCallback(
+    (place: EstablishmentProps) => {
+      if (selected?.place_id === place.place_id) {
+        setSelected(undefined);
+      } else {
+        setSelected(place);
+      }
+    },
+    [selected],
+  );
 
   return (
     <>
@@ -49,24 +53,23 @@ const App: React.FC = () => {
           zoom={15}
           center={{ lat: latitude, lng: longitude }}
         >
-          {locations.map((location, index) => {
+          {locations.map((place, index) => {
             return (
               <Marker
                 key={index}
-                title={location.name}
-                animation="4"
-                position={{
-                  lat: location.geometry.location.lat,
-                  lng: location.geometry.location.lng,
-                }}
+                title={place.name}
+                animation={4}
+                position={place.geometry!.location}
                 icon="/images/coffee-pin.png"
+                onClick={() => handleMarkerClick(place)}
               />
             );
           })}
+          {selected && <Establishment place={selected} />}
           <Marker
             key="userLocation"
             title="Sua localização"
-            animation="2"
+            animation={2}
             position={{ lat: latitude, lng: longitude }}
             icon="/images/my-location-pin.png"
           />
