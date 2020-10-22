@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import GoogleEstablishmentService, {
   EstablishmentProps,
 } from '../../services/GoogleEstablishmentService';
+import Ratings from './Ratings';
+
 import { LeftBar, Title, Paragraph, Image } from './styles';
 
 interface EstablishmentComponent {
@@ -28,7 +30,7 @@ const Establishment: React.FC<EstablishmentComponent> = props => {
   useEffect(() => {
     if (establishment?.photos) {
       if (establishment.photos[0] !== undefined) {
-        const url = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${establishment.photos[0].photo_reference}&sensor=false&key=${process.env.REACT_APP_GOOGLE_API_KEY}`;
+        const url = `https://maps.googleapis.com/maps/api/place/photo?maxheight=150&photoreference=${establishment.photos[0].photo_reference}&sensor=false&key=${process.env.REACT_APP_GOOGLE_API_KEY}`;
         setPhotoUrl(url);
       }
     }
@@ -64,6 +66,7 @@ const Establishment: React.FC<EstablishmentComponent> = props => {
       )}
       <hr />
       <Paragraph>{establishment?.formatted_address}</Paragraph>
+      <Ratings place={props.place} />
     </LeftBar>
   );
 };
