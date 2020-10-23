@@ -4,6 +4,7 @@ import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import GoogleListOfEstablishmentsService from './services/GoogleListOfEstablishments';
 import { EstablishmentProps } from './services/GoogleEstablishmentService';
 import Establishment from './components/Establishment';
+import NearestCoffees from './components/NearestCoffees';
 
 const App: React.FC = () => {
   const [latitude, setLatitude] = useState(0);
@@ -73,6 +74,9 @@ const App: React.FC = () => {
             position={{ lat: latitude, lng: longitude }}
             icon="/images/my-location-pin.png"
           />
+          {latitude !== 0 && longitude !== 0 && (
+            <NearestCoffees latitude={latitude} longitude={longitude} />
+          )}
         </GoogleMap>
       </LoadScript>
     </>
