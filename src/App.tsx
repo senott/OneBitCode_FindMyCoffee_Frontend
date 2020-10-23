@@ -75,7 +75,12 @@ const App: React.FC = () => {
             icon="/images/my-location-pin.png"
           />
           {latitude !== 0 && longitude !== 0 && (
-            <NearestCoffees latitude={latitude} longitude={longitude} />
+            <NearestCoffees
+              latitude={latitude}
+              longitude={longitude}
+              handleMarkerClick={handleMarkerClick}
+              establishments={locations}
+            />
           )}
         </GoogleMap>
       </LoadScript>

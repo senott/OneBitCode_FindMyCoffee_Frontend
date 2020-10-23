@@ -39,8 +39,6 @@ const Form: React.FC<FormProps> = ({ place, loadStore }) => {
           rating_params,
         );
 
-        console.log(response);
-
         loadStore();
 
         setUsername('');

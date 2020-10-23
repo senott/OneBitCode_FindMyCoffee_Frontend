@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import ReactStar from 'react-stars';
 
 import { EstablishmentProps } from '../../../services/GoogleEstablishmentService';
@@ -10,22 +10,25 @@ interface RatingsComponent {
   place: EstablishmentProps;
 }
 
-const Ratings: React.FC<RatingsComponent> = props => {
+const Ratings: React.FC<RatingsComponent> = ({ place }) => {
   const [store, setStore] = useState<StoreProps | undefined>(undefined);
 
   const loadStore = useCallback(() => {
     try {
       setStore(undefined);
-      if (props.place.place_id) {
-        StoreService.show(props.place.place_id).then(response => {
-          console.log(response);
+      if (place.place_id) {
+        StoreService.show(place.place_id).then(response => {
           setStore(response.data);
         });
       }
     } catch (error) {
       setStore(undefined);
     }
-  }, [props.place]);
+  }, [place]);
+
+  useEffect(() => {
+    loadStore();
+  }, [loadStore]);
 
   return (
     <Fragment>
@@ -51,7 +54,7 @@ const Ratings: React.FC<RatingsComponent> = props => {
           })}
         </div>
       )}
-      <Form place={props.place} loadStore={loadStore} />
+      <Form place={place} loadStore={loadStore} />
     </Fragment>
   );
 };

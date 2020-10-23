@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ReactStars from 'react-stars';
 
 import StoreService, { StoreProps } from '../../services/store';
+import { EstablishmentProps } from '../../services/GoogleEstablishmentService';
 
 import {
   RightBar,
@@ -16,11 +17,15 @@ import {
 interface NearestCoffeesProps {
   latitude: number;
   longitude: number;
+  establishments: EstablishmentProps[];
+  handleMarkerClick: (store: EstablishmentProps) => void;
 }
 
 const NearestCoffees: React.FC<NearestCoffeesProps> = ({
   latitude,
   longitude,
+  establishments,
+  handleMarkerClick,
 }) => {
   const [stores, setStores] = useState<StoreProps[] | undefined>(undefined);
 
@@ -41,8 +46,14 @@ const NearestCoffees: React.FC<NearestCoffeesProps> = ({
         <hr />
         {stores &&
           stores.map(store => {
+            const establishment = establishments.find(
+              item => item.place_id === store.google_place_id,
+            );
             return (
-              <EstablishmentItem key={store.name}>
+              <EstablishmentItem
+                key={store.name}
+                onClick={() => handleMarkerClick(establishment!)}
+              >
                 <Title>{store.name}</Title>
                 <Paragraph>{store.address}</Paragraph>
                 {store.ratings_count || 0} opiniões
